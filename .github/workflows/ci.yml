@@ -37,3 +37,12 @@ jobs:
       with:
         name: ODC-Report
         path: dependency-check-report
+        
+    - name: Start React App in background
+      run: |
+        cd my-app
+        nohup npm start & sleep 10
+
+    - name: Simple UI Test (HTTP Check)
+      run: |
+        curl --fail http://localhost:3000 || exit 1
