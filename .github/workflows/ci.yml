@@ -1,0 +1,39 @@
+name: CI with OWASP Check
+
+on: [push, pull_request]
+
+jobs:
+  build-test-security:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Install Dependencies
+      run: |
+        cd my-app
+        npm ci
+
+    - name: Build React App (Integration Test)
+      run: |
+        cd my-app
+        npm run build
+
+    - name: OWASP Dependency Check
+      uses: dependency-check/Dependency-Check_Action@main
+      with:
+        project: "SSD-WebApp"
+        path: "my-app"
+        format: "HTML"
+        out: "dependency-check-report"
+
+    - name: Upload OWASP Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: ODC-Report
+        path: dependency-check-report
